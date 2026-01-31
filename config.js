@@ -61,7 +61,7 @@ const CONFIG = {
   music: {
     enabled: true,
     autoplay: false,
-    musicUrl: "https://raw.githubusercontent.com/draoncell2/valentine-website-2025/main/music.mp3",
+    musicUrl: "./music.mp3",
     startText: "🎵 Play Music",
     stopText: "🔇 Stop Music",
     volume: 0.5

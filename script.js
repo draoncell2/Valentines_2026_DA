@@ -76,7 +76,23 @@ function setupLoveMeter() {
   };
 
   sync();
-  loveMeter.addEventListener("input", sync);
+  loveMeter.addEventListener('input', () => {
+  const value = parseInt(loveMeter.value, 10);
+  loveValue.textContent = value;
+
+  // show the message area
+  extraLove.classList.remove('hidden');
+  extraLove.classList.remove('super-love');
+
+  if (value >= 90) {
+    extraLove.textContent = config.loveMessages.extreme;   // 90–100
+  } else if (value >= 60) {
+    extraLove.textContent = config.loveMessages.high;      // 60–89
+  } else {
+    extraLove.textContent = config.loveMessages.normal;    // 0–59
+  }
+});
+
 }
 
 // ---------- Celebration ----------

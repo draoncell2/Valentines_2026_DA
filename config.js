@@ -39,7 +39,7 @@ const CONFIG = {
 
   celebration: {
     title: "Yay! I'm the luckiest person..., or maybe you are 😘",
-    message: "Now my turn..., i say yes too 🥳❤️ (at this point idk if you said yes or no, but suck it up 😁)",
+    message: "Hoenstly i think...i will say yes too 🥳❤️ (at this point idk if you said yes or no, but suck it up 😁)",
     emojis: "💖💝❤️"
   },
 

@@ -32,7 +32,7 @@ const CONFIG = {
   },
 
   loveMessages: {
-    extreme: "WOOOOW You love me that much?!! didnt expects that...jk 😂❤️😘",
+    extreme: "WOOOOH!! You love me that much?!! didnt expect that...jk 😂❤️😘",
     high: "To infinity and beyond!! ❤️",
     normal: "And beyond! 🥰"
   },

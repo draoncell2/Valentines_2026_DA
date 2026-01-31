@@ -60,7 +60,7 @@ const CONFIG = {
 
   music: {
     enabled: true,
-    autoplay: true,
+    autoplay: false,
     musicUrl: "https://res.cloudinary.com/dpevtua87/video/upload/v1769839321/Lauv_-_I_Like_Me_Better__Lyrics_dob5xd.mp3",
     startText: "🎵 Play Music",
     stopText: "🔇 Stop Music",

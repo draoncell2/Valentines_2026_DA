@@ -58,6 +58,7 @@ function createFloatingElements() {
 }
 
 // ---------- Love meter (0–100 only) ----------
+
 function setupLoveMeter() {
   const loveMeter = document.getElementById("loveMeter");
   const loveValue = document.getElementById("loveValue");
@@ -65,35 +66,38 @@ function setupLoveMeter() {
 
   if (!loveMeter) return;
 
+  // Force 0–100
   loveMeter.min = 0;
   loveMeter.max = 100;
 
-  const sync = () => {
+  const update = () => {
     const value = parseInt(loveMeter.value, 10);
+
     if (loveValue) loveValue.textContent = value;
-    if (extraLove) extraLove.classList.add("hidden"); // no “beyond 100”
-    loveMeter.style.width = "100%";
+
+    if (!extraLove) return;
+
+    // show message area
+    extraLove.classList.remove("hidden");
+    extraLove.classList.remove("super-love");
+
+    if (value >= 90) {
+      extraLove.textContent = config.loveMessages.extreme; // 90–100
+    } else if (value >= 60) {
+      extraLove.textContent = config.loveMessages.high; // 60–89
+    } else {
+      extraLove.textContent = config.loveMessages.normal; // 0–59
+    }
   };
 
-  sync();
-  loveMeter.addEventListener('input', () => {
-  const value = parseInt(loveMeter.value, 10);
-  loveValue.textContent = value;
+  update();
 
-  // show the message area
-  extraLove.classList.remove('hidden');
-  extraLove.classList.remove('super-love');
-
-  if (value >= 90) {
-    extraLove.textContent = config.loveMessages.extreme;   // 90–100
-  } else if (value >= 60) {
-    extraLove.textContent = config.loveMessages.high;      // 60–89
-  } else {
-    extraLove.textContent = config.loveMessages.normal;    // 0–59
-  }
-});
-
+  // If you want it to update only when you STOP dragging, use 'change'
+  loveMeter.addEventListener("input", update);
+  // loveMeter.addEventListener("change", update);
 }
+
+
 
 // ---------- Celebration ----------
 function createHeartExplosion() {

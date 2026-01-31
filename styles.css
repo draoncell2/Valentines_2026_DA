@@ -317,10 +317,31 @@ h2 {
     background: var(--secondary-color);
 } 
 
-.hero-img {
-  width: 220px;
+.photo-collage {
+  position: relative;
+  width: fit-content;
+  margin: 40px auto;
+}
+
+.img-row {
+  display: flex;
+  gap: 20px;
+}
+
+.img-big {
+  width: 320px;
+  max-width: 45vw;
   border-radius: 18px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  margin: 12px auto;
-  display: block;
 }
+
+.img-small {
+  width: 140px;
+  border-radius: 14px;
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+  background: white;
+}
+

@@ -17,7 +17,7 @@ const CONFIG = {
       text: "Do you like me?",
       yesBtn: "Yes",
       noBtn: "No",
-      secretAnswer: "I don't like you, I love you! ❤️"
+      
     },
     second: {
       text: "How much? i need to comform before making this gesture, personal reason😂",

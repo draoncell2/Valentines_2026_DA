@@ -81,7 +81,7 @@ function setupLoveMeter() {
     extraLove.classList.remove("hidden");
     extraLove.classList.remove("super-love");
 
-    if (value >= 90) {
+    if (value >= 80) {
       extraLove.textContent = config.loveMessages.extreme; // 90–100
     } else if (value >= 60) {
       extraLove.textContent = config.loveMessages.high; // 60–89

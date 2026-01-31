@@ -316,32 +316,42 @@ h2 {
     transform: scale(1.05);
     background: var(--secondary-color);
 } 
-
 .photo-collage {
   position: relative;
   width: fit-content;
   margin: 40px auto;
 }
 
+/* row holding 2966 + 56053 */
 .img-row {
   display: flex;
-  gap: 20px;
+  gap: 28px;              /* more breathing room */
 }
 
+/* big images */
 .img-big {
-  width: 320px;
-  max-width: 45vw;
-  border-radius: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  width: 420px;          /* wider */
+  max-width: 48vw;
+  border-radius: 20px;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease;
 }
 
-.img-small {
-  width: 140px;
-  border-radius: 14px;
-  position: absolute;
-  top: -30px;
-  left: -30px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-  background: white;
+.img-big:hover {
+  transform: scale(1.03);
 }
+
+/* small overlay image */
+.img-small {
+  width: 170px;          /* small but visible */
+  position: absolute;
+  top: 10px;             /* slightly higher */
+  left: -90px;           /* pushed further left */
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  background: white;
+  z-index: 6;
+}
+
+
 

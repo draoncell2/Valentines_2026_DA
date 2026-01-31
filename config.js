@@ -61,7 +61,7 @@ const CONFIG = {
   music: {
     enabled: true,
     autoplay: false,
-    musicUrl: "./music.mp3",
+    musicUrl: "https://res.cloudinary.com/dpevtua87/video/upload/v1769852231/music_3_zcbim2.mp3",
     startText: "🎵 Play Music",
     stopText: "🔇 Stop Music",
     volume: 0.5

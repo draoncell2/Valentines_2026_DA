@@ -11,19 +11,24 @@ function validateConfig() {
   }
 
   const isValidHex = (hex) => /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
-  Object.entries(config.colors).forEach(([key, value]) => {
-    if (!isValidHex(value)) {
-      warnings.push(`Invalid color for ${key}! Using default.`);
-      config.colors[key] = getDefaultColor(key);
-    }
-  });
+  if (config.colors) {
+    Object.entries(config.colors).forEach(([key, value]) => {
+      if (!isValidHex(value)) {
+        warnings.push(`Invalid color for ${key}! Using default.`);
+        config.colors[key] = getDefaultColor(key);
+      }
+    });
+  }
 
-  if (parseFloat(config.animations.floatDuration) < 5) {
+  if (config.animations && parseFloat(config.animations.floatDuration) < 5) {
     warnings.push("Float duration too short! Setting to 5s minimum.");
     config.animations.floatDuration = "5s";
   }
 
-  if (config.animations.heartExplosionSize < 1 || config.animations.heartExplosionSize > 3) {
+  if (
+    config.animations &&
+    (config.animations.heartExplosionSize < 1 || config.animations.heartExplosionSize > 3)
+  ) {
     warnings.push("Heart explosion size should be between 1 and 3! Using default.");
     config.animations.heartExplosionSize = 1.5;
   }
@@ -46,21 +51,13 @@ function getDefaultColor(key) {
 }
 
 // Set page title
-document.title = config.pageTitle;
+document.title = config.pageTitle || "Valentine";
 
 // ---------- Helpers ----------
 function showNextQuestion(questionNumber) {
   document.querySelectorAll(".question-section").forEach((q) => q.classList.add("hidden"));
   const el = document.getElementById(`question${questionNumber}`);
   if (el) el.classList.remove("hidden");
-}
-
-function moveButton(button) {
-  const x = Math.random() * (window.innerWidth - button.offsetWidth);
-  const y = Math.random() * (window.innerHeight - button.offsetHeight);
-  button.style.position = "fixed";
-  button.style.left = x + "px";
-  button.style.top = y + "px";
 }
 
 function disableAndHide(...elements) {
@@ -71,12 +68,28 @@ function disableAndHide(...elements) {
   });
 }
 
+// Move button (ONLY for NO buttons)
+function moveButton(button) {
+  if (!button) return;
+
+  const padding = 20;
+  const maxX = window.innerWidth - button.offsetWidth - padding;
+  const maxY = window.innerHeight - button.offsetHeight - padding;
+
+  const x = Math.max(padding, Math.floor(Math.random() * maxX));
+  const y = Math.max(padding, Math.floor(Math.random() * maxY));
+
+  button.style.position = "fixed";
+  button.style.left = x + "px";
+  button.style.top = y + "px";
+}
+
 // ---------- Floating elements ----------
 function createFloatingElements() {
   const container = document.querySelector(".floating-elements");
   if (!container) return;
 
-  config.floatingEmojis.hearts.forEach((heart) => {
+  (config.floatingEmojis?.hearts || []).forEach((heart) => {
     const div = document.createElement("div");
     div.className = "heart";
     div.innerHTML = heart;
@@ -84,7 +97,7 @@ function createFloatingElements() {
     container.appendChild(div);
   });
 
-  config.floatingEmojis.bears.forEach((bear) => {
+  (config.floatingEmojis?.bears || []).forEach((bear) => {
     const div = document.createElement("div");
     div.className = "bear";
     div.innerHTML = bear;
@@ -107,14 +120,12 @@ const extraLove = document.getElementById("extraLove");
 function setInitialPosition() {
   if (!loveMeter) return;
 
-  // Force range to be 0–100
   loveMeter.min = 0;
   loveMeter.max = 100;
-  loveMeter.value = 50; // starting point (change to 0 if you want)
+  loveMeter.value = 50; // change to 0 or 100 if you want
 
   if (loveValue) loveValue.textContent = loveMeter.value;
 
-  // No “beyond 100” effects anymore
   loveMeter.style.width = "100%";
   if (extraLove) extraLove.classList.add("hidden");
 }
@@ -124,7 +135,6 @@ if (loveMeter) {
     const value = parseInt(loveMeter.value, 10);
     if (loveValue) loveValue.textContent = value;
 
-    // Keep it simple: max is 100, so always hide overflow message
     if (extraLove) {
       extraLove.classList.add("hidden");
       extraLove.classList.remove("super-love");
@@ -147,9 +157,9 @@ function celebrate() {
   const m = document.getElementById("celebrationMessage");
   const e = document.getElementById("celebrationEmojis");
 
-  if (t) t.textContent = config.celebration.title;
-  if (m) m.textContent = config.celebration.message;
-  if (e) e.textContent = config.celebration.emojis;
+  if (t) t.textContent = config.celebration?.title || "Yay! 🎉";
+  if (m) m.textContent = config.celebration?.message || "";
+  if (e) e.textContent = config.celebration?.emojis || "💖";
 
   createHeartExplosion();
 }
@@ -158,11 +168,10 @@ function createHeartExplosion() {
   const container = document.querySelector(".floating-elements");
   if (!container) return;
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 40; i++) {
     const heart = document.createElement("div");
-    const randomHeart =
-      config.floatingEmojis.hearts[Math.floor(Math.random() * config.floatingEmojis.hearts.length)];
-    heart.innerHTML = randomHeart;
+    const hearts = config.floatingEmojis?.hearts || ["💖"];
+    heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
     heart.className = "heart";
     container.appendChild(heart);
     setRandomPosition(heart);
@@ -178,7 +187,7 @@ function setupMusicPlayer() {
 
   if (!musicControls || !musicToggle || !bgMusic || !musicSource) return;
 
-  if (!config.music.enabled) {
+  if (!config.music?.enabled) {
     musicControls.style.display = "none";
     return;
   }
@@ -187,38 +196,16 @@ function setupMusicPlayer() {
   bgMusic.volume = config.music.volume ?? 0.5;
   bgMusic.load();
 
-  // IMPORTANT: default button text
-  musicToggle.textContent = config.music.startText;
-
-  // Autoplay is typically blocked — so we do NOT force it here.
-  // (You set autoplay:false in config.js)
-  if (config.music.autoplay) {
-    const playPromise = bgMusic.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          musicToggle.textContent = config.music.stopText;
-        })
-        .catch(() => {
-          musicToggle.textContent = config.music.startText;
-        });
-    }
-  }
+  musicToggle.textContent = config.music.startText || "Play Music";
 
   musicToggle.addEventListener("click", () => {
     if (bgMusic.paused) {
-      bgMusic
-        .play()
-        .then(() => {
-          musicToggle.textContent = config.music.stopText;
-        })
-        .catch(() => {
-          // If browser blocks it, user needs another click or volume permission
-          musicToggle.textContent = config.music.startText;
-        });
+      bgMusic.play()
+        .then(() => (musicToggle.textContent = config.music.stopText || "Stop Music"))
+        .catch(() => (musicToggle.textContent = config.music.startText || "Play Music"));
     } else {
       bgMusic.pause();
-      musicToggle.textContent = config.music.startText;
+      musicToggle.textContent = config.music.startText || "Play Music";
     }
   });
 }
@@ -227,60 +214,56 @@ function setupMusicPlayer() {
 window.addEventListener("DOMContentLoaded", () => {
   validateConfig();
 
-  // Texts from config
+  // Texts from config (safe checks so it never crashes)
   const title = document.getElementById("valentineTitle");
   if (title) title.textContent = `${config.valentineName}, my love...`;
 
-  document.getElementById("question1Text").textContent = config.questions.first.text;
-  document.getElementById("yesBtn1").textContent = config.questions.first.yesBtn;
-  document.getElementById("noBtn1").textContent = config.questions.first.noBtn;
-  document.getElementById("secretAnswerBtn").textContent = config.questions.first.secretAnswer;
+  const q1 = document.getElementById("question1Text");
+  const yesBtn1 = document.getElementById("yesBtn1");
+  const noBtn1 = document.getElementById("noBtn1");
 
-  document.getElementById("question2Text").textContent = config.questions.second.text;
-  document.getElementById("startText").textContent = config.questions.second.startText;
-  document.getElementById("nextBtn").textContent = config.questions.second.nextBtn;
+  const q2 = document.getElementById("question2Text");
+  const startText = document.getElementById("startText");
+  const nextBtn = document.getElementById("nextBtn");
 
-  document.getElementById("question3Text").textContent = config.questions.third.text;
-  document.getElementById("yesBtn3").textContent = config.questions.third.yesBtn;
-  document.getElementById("noBtn3").textContent = config.questions.third.noBtn;
+  const q3 = document.getElementById("question3Text");
+  const yesBtn3 = document.getElementById("yesBtn3");
+  const noBtn3 = document.getElementById("noBtn3");
+
+  if (q1) q1.textContent = config.questions?.first?.text || "";
+  if (yesBtn1) yesBtn1.textContent = config.questions?.first?.yesBtn || "Yes";
+  if (noBtn1) noBtn1.textContent = config.questions?.first?.noBtn || "No";
+
+  if (q2) q2.textContent = config.questions?.second?.text || "";
+  if (startText) startText.textContent = config.questions?.second?.startText || "";
+  if (nextBtn) nextBtn.textContent = config.questions?.second?.nextBtn || "Next";
+
+  if (q3) q3.textContent = config.questions?.third?.text || "";
+  if (yesBtn3) yesBtn3.textContent = config.questions?.third?.yesBtn || "Yes";
+  if (noBtn3) noBtn3.textContent = config.questions?.third?.noBtn || "No";
 
   createFloatingElements();
   setupMusicPlayer();
 
-  // ---------- Button behavior: ask ONCE ----------
-  const yesBtn1 = document.getElementById("yesBtn1");
-  const noBtn1 = document.getElementById("noBtn1");
-  const secretBtn = document.getElementById("secretAnswerBtn");
-
-  const nextBtn = document.getElementById("nextBtn");
-
-  const yesBtn3 = document.getElementById("yesBtn3");
-  const noBtn3 = document.getElementById("noBtn3");
-
-  // Q1: Yes -> go to love meter, and remove buttons so it can’t repeat
+  // ---------- Button behavior ----------
+  // YES never moves, only works once
   if (yesBtn1) {
     yesBtn1.addEventListener("click", () => {
-      disableAndHide(yesBtn1, noBtn1, secretBtn);
+      disableAndHide(yesBtn1, noBtn1);
       showNextQuestion(2);
     });
   }
 
-  // Q1: No -> move away (still fun), but NOT infinite “Yes”
+  // NO moves only a few times, then stops
+  let no1MovesLeft = 4;
   if (noBtn1) {
     noBtn1.addEventListener("click", () => {
+      if (no1MovesLeft <= 0) return;
+      no1MovesLeft--;
       moveButton(noBtn1);
     });
   }
 
-  // Secret button -> just shows next question (optional)
-  if (secretBtn) {
-    secretBtn.addEventListener("click", () => {
-      disableAndHide(yesBtn1, noBtn1, secretBtn);
-      showNextQuestion(2);
-    });
-  }
-
-  // Q2 -> Next -> go to Q3 (one time)
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
       nextBtn.disabled = true;
@@ -288,7 +271,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Q3: Yes -> celebrate (one time)
   if (yesBtn3) {
     yesBtn3.addEventListener("click", () => {
       disableAndHide(yesBtn3, noBtn3);
@@ -296,9 +278,11 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Q3: No -> move away (classic)
+  let no3MovesLeft = 4;
   if (noBtn3) {
     noBtn3.addEventListener("click", () => {
+      if (no3MovesLeft <= 0) return;
+      no3MovesLeft--;
       moveButton(noBtn3);
     });
   }

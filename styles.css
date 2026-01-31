@@ -316,3 +316,11 @@ h2 {
     transform: scale(1.05);
     background: var(--secondary-color);
 } 
+
+.hero-img {
+  width: 220px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  margin: 12px auto;
+  display: block;
+}

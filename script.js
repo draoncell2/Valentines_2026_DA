@@ -169,7 +169,7 @@ function setupMusicPlayer() {
 window.addEventListener("DOMContentLoaded", () => {
   // Texts
   const title = document.getElementById("valentineTitle");
-  if (title) title.textContent = `${config.valentineName}, my love...`;
+  if (title) title.textContent = `${config.valentineName},`;
 
   const q1 = document.getElementById("question1Text");
   const y1 = document.getElementById("yesBtn1");
